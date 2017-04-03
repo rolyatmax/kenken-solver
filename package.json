@@ -2,6 +2,7 @@
   "name": "kenken-solver",
   "version": "1.0.0",
   "description": "solve kenken puzzles",
+  "keywords": "ken-ken kenken solver puzzles sudoku number math game",
   "main": "index.js",
   "scripts": {
     "start": "budo index.js --open --live",
