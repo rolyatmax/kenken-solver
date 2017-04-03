@@ -1,0 +1,181 @@
+[
+  [
+    {
+      "symbol": "-",
+      "result": 6,
+      "cells": [[0, 0], [1, 0]]
+    },
+    {
+      "symbol": "-",
+      "result": 1,
+      "cells": [[2, 0], [3, 0]]
+    },
+    {
+      "symbol": "+",
+      "result": 16,
+      "cells": [[4, 0], [3, 1], [4, 1], [5, 1]]
+    },
+    {
+      "symbol": "/",
+      "result": 2,
+      "cells": [[5, 0], [6, 0]]
+    },
+    {
+      "symbol": "x",
+      "result": 15,
+      "cells": [[0, 1], [1, 1], [1, 2]]
+    },
+    {
+      "symbol": null,
+      "result": 6,
+      "cells": [[2, 1]]
+    },
+    {
+      "symbol": "/",
+      "result": 2,
+      "cells": [[6, 1], [6, 2]]
+    },
+    {
+      "symbol": null,
+      "result": 2,
+      "cells": [[0, 2]]
+    },
+    {
+      "symbol": "-",
+      "result": 1,
+      "cells": [[2, 2], [3, 2]]
+    },
+    {
+      "symbol": "-",
+      "result": 1,
+      "cells": [[4, 2], [4, 3]]
+    },
+    {
+      "symbol": "x",
+      "result": 21,
+      "cells": [[5, 2], [5, 3]]
+    },
+    {
+      "symbol": "+",
+      "result": 17,
+      "cells": [[0, 3], [0, 4], [0, 5]]
+    },
+    {
+      "symbol": "/",
+      "result": 2,
+      "cells": [[1, 3], [1, 4]]
+    },
+    {
+      "symbol": "+",
+      "result": 11,
+      "cells": [[2, 3], [2, 4], [2, 5]]
+    },
+    {
+      "symbol": "+",
+      "result": 7,
+      "cells": [[3, 3], [3, 4]]
+    },
+    {
+      "symbol": "+",
+      "result": 11,
+      "cells": [[6, 3], [6, 4]]
+    },
+    {
+      "symbol": "/",
+      "result": 2,
+      "cells": [[4, 4], [5, 4]]
+    },
+    {
+      "symbol": "+",
+      "result": 14,
+      "cells": [[1, 5], [0, 6], [1, 6]]
+    },
+    {
+      "symbol": null,
+      "result": 2,
+      "cells": [[3, 5]]
+    },
+    {
+      "symbol": "-",
+      "result": 5,
+      "cells": [[4, 5], [5, 5]]
+    },
+    {
+      "symbol": "-",
+      "result": 3,
+      "cells": [[6, 5], [6, 6]]
+    },
+    {
+      "symbol": "-",
+      "result": 1,
+      "cells": [[2, 6], [3, 6]]
+    },
+    {
+      "symbol": "-",
+      "result": 2,
+      "cells": [[4, 6], [5, 6]]
+    }
+  ],
+  [
+    {
+      "symbol": "-",
+      "result": 2,
+      "cells": [[0, 0], [1, 0]]
+    },
+    {
+      "symbol": "x",
+      "result": 40,
+      "cells": [[2, 0], [3, 0], [4, 0]]
+    },
+    {
+      "symbol": "x",
+      "result": 60,
+      "cells": [[0, 1], [1, 1], [0, 2]]
+    },
+    {
+      "symbol": "+",
+      "result": 3,
+      "cells": [[2, 1], [3, 1]]
+    },
+    {
+      "symbol": null,
+      "result": 4,
+      "cells": [[4, 1]]
+    },
+    {
+      "symbol": "/",
+      "result": 2,
+      "cells": [[1, 2], [1, 3]]
+    },
+    {
+      "symbol": "-",
+      "result": 1,
+      "cells": [[2, 2], [2, 3]]
+    },
+    {
+      "symbol": "-",
+      "result": 2,
+      "cells": [[3, 2], [3, 3]]
+    },
+    {
+      "symbol": "-",
+      "result": 4,
+      "cells": [[4, 2], [4, 3]]
+    },
+    {
+      "symbol": "+",
+      "result": 8,
+      "cells": [[0, 3], [0, 4], [1, 4]]
+    },
+    {
+      "symbol": null,
+      "result": 5,
+      "cells": [[2, 4]]
+    },
+    {
+      "symbol": "+",
+      "result": 7,
+      "cells": [[3, 4], [4, 4]]
+    }
+  ]
+]
