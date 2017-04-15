@@ -1,9 +1,10 @@
 import React from 'react'
 import newArray from 'new-array'
 import styled from 'styled-components'
+import ClickOutsideNotifier from './click-outside-notifier'
 // import clues from '../games'
-// import solve from '../solve'
-import { createEmptyBoard, createClues, cellKey, getNeighborCoords, addCellToClue } from '../helpers'
+import solve from '../solve'
+import { createEmptyBoard, createClues, createClueForCell, cellKey, getNeighborCoords, addCellToClue } from '../helpers'
 
 const cellSize = 80
 const borderSize = 2
@@ -25,10 +26,10 @@ const FixKern = styled.span`
 `
 
 const Title = styled.h1`
-  font-size: 88px;
+  font-size: 68px;
   line-height: 0.9em;
   letter-spacing: -5px;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
 `
 
 const Cell = styled.div`
@@ -41,7 +42,7 @@ const Cell = styled.div`
   background-color: #fff;
   border: ${borderSize}px solid ${borderColor};
   float: left;
-  cursor: pointer;
+  ${''/* cursor: pointer; */}
   transition: background-color linear 200ms;
   ${''/* &:hover {
     background-color: #fafafa;
@@ -55,23 +56,96 @@ const Clue = styled.span`
   left: 3px;
   line-height: 1.2em;
   color: #aaa;
+  user-select: none;
+  cursor: pointer;
+  transition: color 200ms linear;
+  &:hover {
+    color: lightblue;
+  }
+`
+
+const modalWidth = 400
+const Modal = styled.div`
+  position: absolute;
+  width: ${modalWidth}px;
+  background-color: white;
+  box-shadow: 0 0 5px rgba(30, 30, 30, 0.3);
+  top: 20vh;
+  left: 50%;
+  margin-left: -${modalWidth / 2}px;
+  border-radius: 5px;
+  color: #555;
+  padding: 20px;
+  box-sizing: border-box;
+`
+
+const Button = styled.button`
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  background-color: lightblue;
+  border: 1px solid #eee;
+  color: white;
+  border-radius: 5px;
+`
+
+const Input = styled.input`
+  padding: 10px 20px;
+  font-size: 18px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+`
+
+const SymbolSelect = styled.span`
+  display: inline-block;
+  font-size: 22px;
+  color: #bbb;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: color 200ms linear;
+  &:hover {
+    color: #777;
+  }
+`
+
+const SolveButton = styled.button`
+  font-size: 38px;
+  margin-top: 25px;
+  padding: 12px 30px;
+  border: 1px solid #bbb;
+  border-radius: 7px;
+  background: #fefefe;
+  cursor: pointer;
+  transition: background 200ms linear, color 200ms linear;
+  color: #555;
+  &:hover {
+    background: lightblue;
+    color: white;
+  }
 `
 
 export default class App extends React.Component {
   constructor () {
     super()
-    // const thisClues = clues[0]
-    const gridSize = 7
+    const gridSize = 5
     const clues = createClues(gridSize)
     this.state = {
       gridSize: gridSize,
       clues: clues,
-      board: createEmptyBoard(clues) // solve(thisClues)
+      board: createEmptyBoard(clues)
     }
   }
 
   updateClues (clues) {
     this.setState({ clues })
+  }
+
+  solve () {
+    // validate the clues
+    // TODO: animate the solving (show all the board versions the algo is trying)
+    // get the board solution and setState
+    const board = solve(this.state.clues)
+    this.setState({ board })
   }
 
   render () {
@@ -83,6 +157,7 @@ export default class App extends React.Component {
           size={this.state.gridSize}
           clues={this.state.clues}
           board={this.state.board} />
+        <SolveButton onClick={this.solve.bind(this)}>Solve!</SolveButton>
       </Container>
     )
   }
@@ -91,24 +166,48 @@ export default class App extends React.Component {
 class Grid extends React.Component {
   constructor () {
     super()
+    this.hasMovedCellsSinceDrag = false
     this.state = {
-      editingClue: null
+      editingClueGroup: null,
+      editingClueResult: null
     }
   }
 
   onMouseDown (cell) {
     const clue = this.props.clues.find(c => c.cells.map(cellKey).includes(cellKey(cell)))
-    this.setState({ editingClue: clue })
+    this.hasMovedCellsSinceDrag = false
+    this.setState({ editingClueGroup: clue })
   }
 
   onMouseUp (cell) {
-    this.setState({ editingClue: null })
+    if (!this.hasMovedCellsSinceDrag) {
+      this.props.updateClues(createClueForCell(cell, this.props.clues))
+    }
+    this.setState({ editingClueGroup: null })
+    this.hasMovedCellsSinceDrag = false
   }
 
   onMouseEnter (cell) {
-    if (this.state.editingClue) {
-      this.props.updateClues(addCellToClue(cell, this.state.editingClue, this.props.clues))
+    if (this.state.editingClueGroup) {
+      this.hasMovedCellsSinceDrag = true
+      this.props.updateClues(addCellToClue(cell, this.state.editingClueGroup, this.props.clues))
     }
+  }
+
+  onClickClue (e, cell) {
+    const clue = this.props.clues.find(c => c.cells.map(cellKey).includes(cellKey(cell)))
+    this.setState({ editingClueResult: clue, editingClueGroup: null })
+    e.preventDefault()
+    e.stopPropagation()
+    return false
+  }
+
+  updateClue (result, symbol) {
+    const clue = this.props.clues.find(c => c === this.state.editingClueResult)
+    clue.result = parseInt(result, 10)
+    clue.symbol = symbol
+    this.props.updateClues([...this.props.clues])
+    this.setState({ editingClueResult: null })
   }
 
   render () {
@@ -140,12 +239,70 @@ class Grid extends React.Component {
               onMouseEnter={() => this.onMouseEnter(cell)}>
               <span>
                 {value}
-                {isTopRight(cell, clue.cells) ? <Clue>{clue.result}{clue.symbol}</Clue> : null}
+                {isTopRight(cell, clue.cells) ? (
+                  <Clue onMouseUp={(e) => this.onClickClue(e, cell)}>{clue.result ? `${clue.result}${clue.symbol || ''}` : 'Add clue'}</Clue>
+                ) : null}
               </span>
             </Cell>
           )
         })}
+        {this.state.editingClueResult ? (
+          <EditClueModal clue={this.state.editingClueResult} updateClue={this.updateClue.bind(this)} />
+        ) : null}
       </Board>
+    )
+  }
+}
+
+class EditClueModal extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      result: props.clue.result,
+      symbol: props.clue.symbol
+    }
+  }
+
+  componentDidMount () {
+    this.input.focus()
+  }
+
+  cancel () {
+    this.props.updateClue(this.state.result, this.state.symbol)
+  }
+
+  updateClue () {
+    this.props.updateClue(this.state.result, this.state.symbol)
+  }
+
+  onChange (e) {
+    this.setState({
+      result: e.target.value
+    })
+  }
+
+  setSymbol (symbol) {
+    this.setState({ symbol })
+  }
+
+  render () {
+    const symbols = ['+', '-', 'x', '/']
+    const isSingleCell = this.props.clue.cells.length === 1
+    return (
+      <ClickOutsideNotifier onOutsideClick={this.cancel.bind(this)}>
+        <Modal onClick={(e) => { e.stopPropagation(); e.preventDefault(); return false }}>
+          {/* add text inputs here! */}
+          <Input placeholder='Number' innerRef={(el) => { this.input = el }} value={this.state.result || ''} onChange={this.onChange.bind(this)} />
+          {isSingleCell ? null : (
+            symbols.map(s => (
+              <SymbolSelect key={s} onClick={() => this.setSymbol(s)} style={this.state.symbol === s ? { color: '#555' } : {}}>
+                {s}
+              </SymbolSelect>
+            ))
+          )}
+          <Button type='submit' onClick={this.updateClue.bind(this)}>Update</Button>
+        </Modal>
+      </ClickOutsideNotifier>
     )
   }
 }

@@ -4,6 +4,7 @@ module.exports = {
   createEmptyBoard,
   getMaxCellIndex,
   createClues,
+  createClueForCell,
   addCellToClue,
   getNeighborCoords,
   cellKey
@@ -27,12 +28,28 @@ function getMaxCellIndex (clues) {
 function createClues (size) {
   return newArray(size * size).map((_, i) => {
     const cell = [i % size, i / size | 0]
-    return {
-      symbol: null,
-      result: null,
-      cells: [cell]
-    }
+    return createClue(cell)
   })
+}
+
+function createClue (cell) {
+  return {
+    symbol: null,
+    result: null,
+    cells: [cell]
+  }
+}
+
+function createClueForCell (cell, clues) {
+  for (let c of clues) {
+    const idx = c.cells.map(cellKey).indexOf(cellKey(cell))
+    if (idx > -1) {
+      c.cells.splice(idx, 1)
+      break
+    }
+  }
+  clues.push(createClue(cell))
+  return [...clues]
 }
 
 function addCellToClue (cell, clue, clues) {
