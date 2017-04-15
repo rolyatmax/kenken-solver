@@ -1,5 +1,6 @@
 const assert = require('assert')
 const newArray = require('new-array')
+const { createEmptyBoard, getMaxCellIndex } = require('./helpers')
 
 module.exports = function solve (clues) {
   validateClues(clues)
@@ -58,12 +59,12 @@ function getNextPossibleBoards (board, clue) {
   }
 
   const nextBoards = clue.possibleAnswers.map((values) => {
-      const b = copyBoard(board)
-      values.forEach((val, i) => {
-        const [x, y] = clue.cells[i]
-        b[x][y] = val
-      })
-      return b
+    const b = copyBoard(board)
+    values.forEach((val, i) => {
+      const [x, y] = clue.cells[i]
+      b[x][y] = val
+    })
+    return b
   })
 
   return nextBoards
@@ -121,21 +122,6 @@ function checkRows (board) {
     }
   }
   return true
-}
-
-function createEmptyBoard (clues) {
-  const max = getMaxCellIndex(clues)
-  return newArray(max + 1).map(() => newArray(max + 1, null))
-}
-
-function getMaxCellIndex (clues) {
-  return clues.reduce((max, clue) => {
-    for (let cell of clue.cells) {
-      const cellMax = Math.max(cell[0], cell[1])
-      if (cellMax > max) return cellMax
-    }
-    return max
-  }, 0)
 }
 
 function validateClues (clues) {

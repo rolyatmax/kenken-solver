@@ -1,13 +1,15 @@
 import React from 'react'
 import newArray from 'new-array'
 import styled from 'styled-components'
-import clues from '../games'
-import solve from '../solve'
+// import clues from '../games'
+// import solve from '../solve'
+import { createEmptyBoard, createClues, cellKey, getNeighborCoords, addCellToClue } from '../helpers'
 
 const cellSize = 80
 const borderSize = 2
 const borderColor = '#bbb'
 const neighborBorderColor = '#efefef'
+const neighborBorderStyle = 'dashed'
 
 const Container = styled.div`
   width: 960px;
@@ -58,54 +60,94 @@ const Clue = styled.span`
 export default class App extends React.Component {
   constructor () {
     super()
-    const thisClues = clues[0]
+    // const thisClues = clues[0]
+    const gridSize = 7
+    const clues = createClues(gridSize)
     this.state = {
-      gridSize: 7,
-      clues: thisClues,
-      board: solve(thisClues)
+      gridSize: gridSize,
+      clues: clues,
+      board: createEmptyBoard(clues) // solve(thisClues)
     }
+  }
+
+  updateClues (clues) {
+    this.setState({ clues })
   }
 
   render () {
     return (
       <Container>
         <Title><FixKern>K</FixKern>en<FixKern>K</FixKern>en:<br />The Solver!</Title>
-        <Grid size={this.state.gridSize} clues={this.state.clues} board={this.state.board} />
+        <Grid
+          updateClues={this.updateClues.bind(this)}
+          size={this.state.gridSize}
+          clues={this.state.clues}
+          board={this.state.board} />
       </Container>
     )
   }
 }
 
-function Grid ({ size, clues, board }) {
-  const Board = styled.div`
-    width: ${cellSize * size}px;
-    height: ${cellSize * size}px;
-    border: ${borderSize}px solid ${borderColor};
-    margin: auto;
-  `
+class Grid extends React.Component {
+  constructor () {
+    super()
+    this.state = {
+      editingClue: null
+    }
+  }
 
-  const cluesByCell = keyByCells(clues)
+  onMouseDown (cell) {
+    const clue = this.props.clues.find(c => c.cells.map(cellKey).includes(cellKey(cell)))
+    this.setState({ editingClue: clue })
+  }
 
-  return (
-    <Board>
-      {newArray(size * size).map((_, i) => {
-        const col = i % size
-        const row = i / size | 0
-        const cell = [col, row]
-        const clue = cluesByCell[cellKey(cell)]
-        const style = getBorderStyle(cell, clue.cells, size)
-        const value = board[col][row]
-        return (
-          <Cell key={i} style={style}>
-            <span>
-              {value}
-              {isTopRight(cell, clue.cells) ? <Clue>{clue.result}{clue.symbol}</Clue> : null}
-            </span>
-          </Cell>
-        )
-      })}
-    </Board>
-  )
+  onMouseUp (cell) {
+    this.setState({ editingClue: null })
+  }
+
+  onMouseEnter (cell) {
+    if (this.state.editingClue) {
+      this.props.updateClues(addCellToClue(cell, this.state.editingClue, this.props.clues))
+    }
+  }
+
+  render () {
+    const { size, clues, board } = this.props
+    const Board = styled.div`
+      width: ${cellSize * size}px;
+      height: ${cellSize * size}px;
+      border: ${borderSize}px solid ${borderColor};
+      margin: auto;
+    `
+
+    const cluesByCell = keyByCells(clues)
+
+    return (
+      <Board>
+        {newArray(size * size).map((_, i) => {
+          const col = i % size
+          const row = i / size | 0
+          const cell = [col, row]
+          const clue = cluesByCell[cellKey(cell)]
+          const style = getBorderStyle(cell, clue.cells, size)
+          const value = board[col][row]
+          return (
+            <Cell
+              key={i}
+              style={style}
+              onMouseDown={() => this.onMouseDown(cell)}
+              onMouseUp={() => this.onMouseUp(cell)}
+              onMouseEnter={() => this.onMouseEnter(cell)}>
+              <span>
+                {value}
+                {isTopRight(cell, clue.cells) ? <Clue>{clue.result}{clue.symbol}</Clue> : null}
+              </span>
+            </Cell>
+          )
+        })}
+      </Board>
+    )
+  }
 }
 
 function keyByCells (clues) {
@@ -140,32 +182,10 @@ function getBorderStyle (cell, neighbors, gridSize) {
   const neighborCoords = getNeighborCoords(cell, gridSize)
   for (let direction in neighborCoords) {
     if (neighbors.includes(cellKey(neighborCoords[direction]))) {
-      style[`border${capitalize(direction)}`] = `${borderSize}px solid ${neighborBorderColor}`
+      style[`border${capitalize(direction)}`] = `${borderSize}px ${neighborBorderStyle} ${neighborBorderColor}`
     }
   }
   return style
-}
-
-function getNeighborCoords (cell, gridSize) {
-  const [col, row] = cell
-  const neighbors = {}
-  if (col - 1 >= 0) {
-    neighbors.left = [col - 1, row]
-  }
-  if (col + 1 < gridSize) {
-    neighbors.right = [col + 1, row]
-  }
-  if (row - 1 >= 0) {
-    neighbors.top = [col, row - 1]
-  }
-  if (row + 1 < gridSize) {
-    neighbors.bottom = [col, row + 1]
-  }
-  return neighbors
-}
-
-function cellKey (cell) {
-  return cell.join('|')
 }
 
 function capitalize (str) {
