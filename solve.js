@@ -4,7 +4,17 @@ const newArray = require('new-array')
 module.exports = function solve (clues) {
   validateClues(clues)
   const board = createEmptyBoard(clues)
-  return getValidBoard(board, clues)
+
+  // find all possible set combinations first, then
+  // sort clues by fewest to most answers as a way to prune the
+  // tree early
+  clues = clues.map(clue => Object.assign({}, clue, {
+    possibleAnswers: getPossibleAnswers(board, clue)
+  }))
+  clues.sort((clue1, clue2) => clue1.possibleAnswers.length - clue2.possibleAnswers.length)
+
+  const solution = getValidBoard(board, clues)
+  return solution
 }
 
 function getValidBoard (board, clues) {
@@ -16,16 +26,13 @@ function getValidBoard (board, clues) {
   return nextBoards[0] || null
 }
 
-function getNextPossibleBoards (board, clue) {
+function getPossibleAnswers (board, clue) {
   if (!clue.symbol) {
-    board = copyBoard(board)
-    board[clue.cells[0][0]][clue.cells[0][1]] = clue.result
-    return [board]
+    return [clue.result]
   }
-
   const permutationValues = newArray(board.length).map((d, i) => i + 1)
   const numberCombos = generatePermutations(clue.cells.length, permutationValues)
-  const validCombos = numberCombos.filter(combo => {
+  return numberCombos.filter(combo => {
     switch (clue.symbol) {
       case '+': {
         return combo.reduce((total, val) => total + val, 0) === clue.result
@@ -41,8 +48,16 @@ function getNextPossibleBoards (board, clue) {
       }
     }
   })
+}
 
-  const nextBoards = validCombos.map((values) => {
+function getNextPossibleBoards (board, clue) {
+  if (clue.possibleAnswers.length === 1) {
+    board = copyBoard(board)
+    board[clue.cells[0][0]][clue.cells[0][1]] = clue.possibleAnswers[0]
+    return [board]
+  }
+
+  const nextBoards = clue.possibleAnswers.map((values) => {
       const b = copyBoard(board)
       values.forEach((val, i) => {
         const [x, y] = clue.cells[i]
