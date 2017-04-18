@@ -49,7 +49,7 @@ function createClueForCell (cell, clues) {
     }
   }
   clues.push(createClue(cell))
-  return [...clues]
+  return clues.filter(clue => clue.cells.length)
 }
 
 function addCellToClue (cell, clue, clues) {

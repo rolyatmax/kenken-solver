@@ -328,7 +328,6 @@ class EditClueModal extends React.Component {
   }
 
   onKeyUp (e) {
-    console.log('keyup!', e.which)
     switch (e.which) {
       case 27:
         this.cancel()
