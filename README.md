@@ -20,27 +20,27 @@ const clues = [
   {
     symbol: '-',
     result: 2,
-    cells: [[0, 0], [1, 0]]
+    cells: ['A1', 'B1']
   },
   {
     symbol: 'x',
     result: 40,
-    cells: [[2, 0], [3, 0], [4, 0]]
+    cells: ['C1', 'D1', 'E1']
   },
   {
     symbol: '+',
     result: 3,
-    cells: [[2, 1], [3, 1]]
+    cells: ['C2', 'D2']
   },
   {
     symbol: null,
     result: 4,
-    cells: [[4, 1]]
+    cells: ['E2']
   },
   {
     symbol: '/',
     result: 2,
-    cells: [[1, 2], [1, 3]]
+    cells: ['B3', 'B4']
   },
   ...
 ]
