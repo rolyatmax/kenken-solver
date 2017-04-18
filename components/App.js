@@ -32,6 +32,31 @@ const Title = styled.h1`
   margin-bottom: 40px;
 `
 
+const GridSizeButtons = styled.div`
+  display: inline-block;
+  margin-bottom: 20px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  overflow: hidden;
+`
+
+const GridSizeButton = styled.button`
+  outline: none;
+  padding: 10px 15px;
+  border: 0;
+  border-right: 1px solid #999;
+  color: #666;
+  background-color: white;
+  cursor: pointer;
+  transition: all 150ms linear;
+  &:hover {
+    background-color: #f5f5f5;
+  }
+  &:last-child {
+    border-right: 0;
+  }
+`
+
 const Cell = styled.div`
   position: relative;
   font-size: 26px;
@@ -128,16 +153,25 @@ export default class App extends React.Component {
   constructor () {
     super()
     const gridSize = 5
+    this.state = this.getResetState(gridSize)
+  }
+
+  getResetState (gridSize) {
     const clues = createClues(gridSize)
-    this.state = {
+    return {
       gridSize: gridSize,
       clues: clues,
       board: createEmptyBoard(clues)
     }
   }
 
+  updateGridSize (gridSize) {
+    this.setState(this.getResetState(gridSize))
+  }
+
   updateClues (clues) {
-    this.setState({ clues })
+    const board = createEmptyBoard(clues)
+    this.setState({ clues, board })
   }
 
   solve () {
@@ -149,18 +183,37 @@ export default class App extends React.Component {
   }
 
   render () {
+    const { gridSize, clues, board } = this.state
     return (
       <Container>
         <Title><FixKern>K</FixKern>en<FixKern>K</FixKern>en:<br />The Solver!</Title>
+        <GridSizeSelector gridSize={gridSize} updateGridSize={this.updateGridSize.bind(this)} />
         <Grid
           updateClues={this.updateClues.bind(this)}
-          size={this.state.gridSize}
-          clues={this.state.clues}
-          board={this.state.board} />
+          size={gridSize}
+          clues={clues}
+          board={board} />
         <SolveButton onClick={this.solve.bind(this)}>Solve!</SolveButton>
       </Container>
     )
   }
+}
+
+function GridSizeSelector ({ updateGridSize, gridSize }) {
+  const sizes = [3, 4, 5, 6, 7, 8, 9]
+  const selectedStyle = { backgroundColor: 'lightblue', color: 'white' }
+  return (
+    <GridSizeButtons>
+      {sizes.map(size => (
+        <GridSizeButton
+          key={size}
+          style={gridSize === size ? selectedStyle : {}}
+          onClick={() => updateGridSize(size)}>
+          {size}
+        </GridSizeButton>
+      ))}
+    </GridSizeButtons>
+  )
 }
 
 class Grid extends React.Component {
@@ -204,7 +257,7 @@ class Grid extends React.Component {
 
   updateClue (result, symbol) {
     const clue = this.props.clues.find(c => c === this.state.editingClueResult)
-    clue.result = parseInt(result, 10)
+    clue.result = result
     clue.symbol = symbol
     this.props.updateClues([...this.props.clues])
     this.setState({ editingClueResult: null })
@@ -254,9 +307,11 @@ class Grid extends React.Component {
   }
 }
 
+const symbols = ['+', '-', 'x', '/']
 class EditClueModal extends React.Component {
   constructor (props) {
     super(props)
+    this.onKeyUp = this.onKeyUp.bind(this)
     this.state = {
       result: props.clue.result,
       symbol: props.clue.symbol
@@ -265,20 +320,37 @@ class EditClueModal extends React.Component {
 
   componentDidMount () {
     this.input.focus()
+    window.addEventListener('keyup', this.onKeyUp)
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('keyup', this.onKeyUp)
+  }
+
+  onKeyUp (e) {
+    console.log('keyup!', e.which)
+    switch (e.which) {
+      case 27:
+        this.cancel()
+        return
+      case 13:
+        this.submit()
+    }
   }
 
   cancel () {
-    this.props.updateClue(this.state.result, this.state.symbol)
+    this.props.updateClue(this.props.clue.result, this.props.clue.symbol)
   }
 
-  updateClue () {
+  submit () {
     this.props.updateClue(this.state.result, this.state.symbol)
   }
 
   onChange (e) {
-    this.setState({
-      result: e.target.value
-    })
+    const last = e.target.value[e.target.value.length - 1]
+    const symbol = symbols.includes(last) ? last : this.state.symbol
+    const result = parseInt(e.target.value, 10)
+    this.setState({ result, symbol })
   }
 
   setSymbol (symbol) {
@@ -286,12 +358,10 @@ class EditClueModal extends React.Component {
   }
 
   render () {
-    const symbols = ['+', '-', 'x', '/']
     const isSingleCell = this.props.clue.cells.length === 1
     return (
       <ClickOutsideNotifier onOutsideClick={this.cancel.bind(this)}>
         <Modal onClick={(e) => { e.stopPropagation(); e.preventDefault(); return false }}>
-          {/* add text inputs here! */}
           <Input placeholder='Number' innerRef={(el) => { this.input = el }} value={this.state.result || ''} onChange={this.onChange.bind(this)} />
           {isSingleCell ? null : (
             symbols.map(s => (
@@ -300,7 +370,7 @@ class EditClueModal extends React.Component {
               </SymbolSelect>
             ))
           )}
-          <Button type='submit' onClick={this.updateClue.bind(this)}>Update</Button>
+          <Button onClick={this.submit.bind(this)}>Update</Button>
         </Modal>
       </ClickOutsideNotifier>
     )
