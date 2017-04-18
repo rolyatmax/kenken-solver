@@ -47,7 +47,7 @@ const clues = [
 ```
 
 ## To do:
- - [ ] switch to `A1`, `B1`, etc cell names (instead of `[0,0]`, `[1,0]`, etc)
+ - [x] switch to `A1`, `B1`, etc cell names (instead of `[0,0]`, `[1,0]`, etc)
  - [ ] add reset button
  - [ ] add "random puzzle" button
  - [ ] encode puzzles in URL for easy sharing?
@@ -56,4 +56,4 @@ const clues = [
  - [ ] check for multiple solutions
  - [ ] algorithm performance improvements
  - [ ] computer-generated kenken puzzles?
- - [ ] deploy on github pages 
+ - [ ] deploy on github pages

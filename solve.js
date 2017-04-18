@@ -51,18 +51,25 @@ function getPossibleAnswers (board, clue) {
   })
 }
 
+const columnNames = 'ABCDEFGHI'
+function updateCell (board, cell, value) {
+  board = copyBoard(board)
+  const x = columnNames.indexOf(cell[0])
+  const y = parseInt(cell[1], 10) - 1
+  board[x][y] = value
+  return board
+}
+
 function getNextPossibleBoards (board, clue) {
   if (clue.possibleAnswers.length === 1) {
-    board = copyBoard(board)
-    board[clue.cells[0][0]][clue.cells[0][1]] = clue.possibleAnswers[0]
+    board = updateCell(board, clue.cells[0], clue.possibleAnswers[0])
     return [board]
   }
 
   const nextBoards = clue.possibleAnswers.map((values) => {
-    const b = copyBoard(board)
+    let b = copyBoard(board)
     values.forEach((val, i) => {
-      const [x, y] = clue.cells[i]
-      b[x][y] = val
+      b = updateCell(b, clue.cells[i], val)
     })
     return b
   })
@@ -129,13 +136,12 @@ function validateClues (clues) {
   let cellCount = 0
 
   clues.forEach(clue => {
-    clue.cells.forEach(([x, y]) => {
-      const key = [x, y].join(',')
-      if (cells[key]) {
-        throw new Error(`Cell ${key} seen more than once`)
+    clue.cells.forEach(cell => {
+      if (cells[cell]) {
+        throw new Error(`Cell ${cell} seen more than once`)
       }
       cellCount += 1
-      cells[key] = true
+      cells[cell] = true
     })
     // make sure all null symbols have only one cell
     if (!clue.symbol && clue.cells.length !== 1) {

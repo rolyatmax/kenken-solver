@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import ClickOutsideNotifier from './click-outside-notifier'
 // import clues from '../games'
 import solve from '../solve'
-import { createEmptyBoard, createClues, createClueForCell, cellKey, getNeighborCoords, addCellToClue } from '../helpers'
+import { createEmptyBoard, createClues, createClueForCell, getNeighborCoords, addCellToClue } from '../helpers'
 
 const cellSize = 80
 const borderSize = 2
@@ -227,7 +227,7 @@ class Grid extends React.Component {
   }
 
   onMouseDown (cell) {
-    const clue = this.props.clues.find(c => c.cells.map(cellKey).includes(cellKey(cell)))
+    const clue = this.props.clues.find(c => c.cells.includes(cell))
     this.hasMovedCellsSinceDrag = false
     this.setState({ editingClueGroup: clue })
   }
@@ -248,7 +248,7 @@ class Grid extends React.Component {
   }
 
   onClickClue (e, cell) {
-    const clue = this.props.clues.find(c => c.cells.map(cellKey).includes(cellKey(cell)))
+    const clue = this.props.clues.find(c => c.cells.includes(cell))
     this.setState({ editingClueResult: clue, editingClueGroup: null })
     e.preventDefault()
     e.stopPropagation()
@@ -273,14 +273,14 @@ class Grid extends React.Component {
     `
 
     const cluesByCell = keyByCells(clues)
-
+    const columnNames = 'ABCDEFGHI'
     return (
       <Board>
         {newArray(size * size).map((_, i) => {
           const col = i % size
           const row = i / size | 0
-          const cell = [col, row]
-          const clue = cluesByCell[cellKey(cell)]
+          const cell = `${columnNames[col]}${row + 1}`
+          const clue = cluesByCell[cell]
           const style = getBorderStyle(cell, clue.cells, size)
           const value = board[col][row]
           return (
@@ -380,7 +380,7 @@ function keyByCells (clues) {
   const key = {}
   for (let clue of clues) {
     for (let cell of clue.cells) {
-      key[cellKey(cell)] = clue
+      key[cell] = clue
     }
   }
   return key
@@ -397,17 +397,16 @@ function isTopRight (cell, cells) {
       continue
     }
   }
-  return cellKey(topRight) === cellKey(cell)
+  return topRight === cell
 }
 
 // we change the border color for cells in the same clue so that
 // they appear to be grouped together
 function getBorderStyle (cell, neighbors, gridSize) {
   const style = {}
-  neighbors = neighbors.map(cellKey)
   const neighborCoords = getNeighborCoords(cell, gridSize)
   for (let direction in neighborCoords) {
-    if (neighbors.includes(cellKey(neighborCoords[direction]))) {
+    if (neighbors.includes(neighborCoords[direction])) {
       style[`border${capitalize(direction)}`] = `${borderSize}px ${neighborBorderStyle} ${neighborBorderColor}`
     }
   }

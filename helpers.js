@@ -1,13 +1,14 @@
 const newArray = require('new-array')
 
+const columnNames = 'ABCDEFGHI'
+
 module.exports = {
   createEmptyBoard,
   getMaxCellIndex,
   createClues,
   createClueForCell,
   addCellToClue,
-  getNeighborCoords,
-  cellKey
+  getNeighborCoords
 }
 
 function createEmptyBoard (clues) {
@@ -18,7 +19,9 @@ function createEmptyBoard (clues) {
 function getMaxCellIndex (clues) {
   return clues.reduce((max, clue) => {
     for (let cell of clue.cells) {
-      const cellMax = Math.max(cell[0], cell[1])
+      const col = columnNames.indexOf(cell[0])
+      const row = parseInt(cell[1]) - 1
+      const cellMax = Math.max(col, row)
       if (cellMax > max) return cellMax
     }
     return max
@@ -27,8 +30,9 @@ function getMaxCellIndex (clues) {
 
 function createClues (size) {
   return newArray(size * size).map((_, i) => {
-    const cell = [i % size, i / size | 0]
-    return createClue(cell)
+    const col = i % size
+    const row = i / size | 0
+    return createClue(`${columnNames[col]}${row + 1}`)
   })
 }
 
@@ -42,7 +46,7 @@ function createClue (cell) {
 
 function createClueForCell (cell, clues) {
   for (let c of clues) {
-    const idx = c.cells.map(cellKey).indexOf(cellKey(cell))
+    const idx = c.cells.indexOf(cell)
     if (idx > -1) {
       c.cells.splice(idx, 1)
       break
@@ -53,9 +57,9 @@ function createClueForCell (cell, clues) {
 }
 
 function addCellToClue (cell, clue, clues) {
-  if (clue.cells.map(cellKey).includes(cellKey(cell))) return clues
+  if (clue.cells.includes(cell)) return clues
   for (let c of clues) {
-    const idx = c.cells.map(cellKey).indexOf(cellKey(cell))
+    const idx = c.cells.indexOf(cell)
     if (idx > -1) {
       c.cells.splice(idx, 1)
       break
@@ -66,23 +70,20 @@ function addCellToClue (cell, clue, clues) {
 }
 
 function getNeighborCoords (cell, gridSize) {
-  const [col, row] = cell
+  const col = columnNames.indexOf(cell[0])
+  const row = parseInt(cell[1], 10) - 1
   const neighbors = {}
   if (col - 1 >= 0) {
-    neighbors.left = [col - 1, row]
+    neighbors.left = `${columnNames[col - 1]}${row + 1}` // [col - 1, row]
   }
   if (col + 1 < gridSize) {
-    neighbors.right = [col + 1, row]
+    neighbors.right = `${columnNames[col + 1]}${row + 1}` // [col + 1, row]
   }
   if (row - 1 >= 0) {
-    neighbors.top = [col, row - 1]
+    neighbors.top = `${columnNames[col]}${row}` // [col, row - 1]
   }
   if (row + 1 < gridSize) {
-    neighbors.bottom = [col, row + 1]
+    neighbors.bottom = `${columnNames[col]}${row + 2}` // [col, row + 1]
   }
   return neighbors
-}
-
-function cellKey (cell) {
-  return cell.join('|')
 }

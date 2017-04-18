@@ -3,179 +3,179 @@
     {
       "symbol": "-",
       "result": 6,
-      "cells": [[0, 0], [1, 0]]
+      "cells": ["A1", "B1"]
     },
     {
       "symbol": "-",
       "result": 1,
-      "cells": [[2, 0], [3, 0]]
+      "cells": ["C1", "D1"]
     },
     {
       "symbol": "+",
       "result": 16,
-      "cells": [[4, 0], [3, 1], [4, 1], [5, 1]]
+      "cells": ["E1", "D2", "E2", "F2"]
     },
     {
       "symbol": "/",
       "result": 2,
-      "cells": [[5, 0], [6, 0]]
+      "cells": ["F1", "G1"]
     },
     {
       "symbol": "x",
       "result": 15,
-      "cells": [[0, 1], [1, 1], [1, 2]]
+      "cells": ["A2", "B2", "B3"]
     },
     {
       "symbol": null,
       "result": 6,
-      "cells": [[2, 1]]
+      "cells": ["C2"]
     },
     {
       "symbol": "/",
       "result": 2,
-      "cells": [[6, 1], [6, 2]]
+      "cells": ["G2", "G3"]
     },
     {
       "symbol": null,
       "result": 2,
-      "cells": [[0, 2]]
+      "cells": ["A3"]
     },
     {
       "symbol": "-",
       "result": 1,
-      "cells": [[2, 2], [3, 2]]
+      "cells": ["C3", "D3"]
     },
     {
       "symbol": "-",
       "result": 1,
-      "cells": [[4, 2], [4, 3]]
+      "cells": ["E3", "E4"]
     },
     {
       "symbol": "x",
       "result": 21,
-      "cells": [[5, 2], [5, 3]]
+      "cells": ["F3", "F4"]
     },
     {
       "symbol": "+",
       "result": 17,
-      "cells": [[0, 3], [0, 4], [0, 5]]
+      "cells": ["A4", "A5", "A6"]
     },
     {
       "symbol": "/",
       "result": 2,
-      "cells": [[1, 3], [1, 4]]
+      "cells": ["B4", "B5"]
     },
     {
       "symbol": "+",
       "result": 11,
-      "cells": [[2, 3], [2, 4], [2, 5]]
+      "cells": ["C4", "C5", "C6"]
     },
     {
       "symbol": "+",
       "result": 7,
-      "cells": [[3, 3], [3, 4]]
+      "cells": ["D4", "D5"]
     },
     {
       "symbol": "+",
       "result": 11,
-      "cells": [[6, 3], [6, 4]]
+      "cells": ["G4", "G5"]
     },
     {
       "symbol": "/",
       "result": 2,
-      "cells": [[4, 4], [5, 4]]
+      "cells": ["E5", "F5"]
     },
     {
       "symbol": "+",
       "result": 14,
-      "cells": [[1, 5], [0, 6], [1, 6]]
+      "cells": ["B6", "A7", "B7"]
     },
     {
       "symbol": null,
       "result": 2,
-      "cells": [[3, 5]]
+      "cells": ["D6"]
     },
     {
       "symbol": "-",
       "result": 5,
-      "cells": [[4, 5], [5, 5]]
+      "cells": ["E6", "F6"]
     },
     {
       "symbol": "-",
       "result": 3,
-      "cells": [[6, 5], [6, 6]]
+      "cells": ["G6", "G7"]
     },
     {
       "symbol": "-",
       "result": 1,
-      "cells": [[2, 6], [3, 6]]
+      "cells": ["C7", "D7"]
     },
     {
       "symbol": "-",
       "result": 2,
-      "cells": [[4, 6], [5, 6]]
+      "cells": ["E7", "F7"]
     }
   ],
   [
     {
       "symbol": "-",
       "result": 2,
-      "cells": [[0, 0], [1, 0]]
+      "cells": ["A1", "B1"]
     },
     {
       "symbol": "x",
       "result": 40,
-      "cells": [[2, 0], [3, 0], [4, 0]]
+      "cells": ["C1", "D1", "E1"]
     },
     {
       "symbol": "x",
       "result": 60,
-      "cells": [[0, 1], [1, 1], [0, 2]]
+      "cells": ["A2", "B2", "A3"]
     },
     {
       "symbol": "+",
       "result": 3,
-      "cells": [[2, 1], [3, 1]]
+      "cells": ["C2", "D2"]
     },
     {
       "symbol": null,
       "result": 4,
-      "cells": [[4, 1]]
+      "cells": ["E2"]
     },
     {
       "symbol": "/",
       "result": 2,
-      "cells": [[1, 2], [1, 3]]
+      "cells": ["B3", "B4"]
     },
     {
       "symbol": "-",
       "result": 1,
-      "cells": [[2, 2], [2, 3]]
+      "cells": ["C3", "C4"]
     },
     {
       "symbol": "-",
       "result": 2,
-      "cells": [[3, 2], [3, 3]]
+      "cells": ["D3", "D4"]
     },
     {
       "symbol": "-",
       "result": 4,
-      "cells": [[4, 2], [4, 3]]
+      "cells": ["E3", "E4"]
     },
     {
       "symbol": "+",
       "result": 8,
-      "cells": [[0, 3], [0, 4], [1, 4]]
+      "cells": ["A4", "A5", "B5"]
     },
     {
       "symbol": null,
       "result": 5,
-      "cells": [[2, 4]]
+      "cells": ["C5"]
     },
     {
       "symbol": "+",
       "result": 7,
-      "cells": [[3, 4], [4, 4]]
+      "cells": ["D5", "E5"]
     }
   ]
 ]
