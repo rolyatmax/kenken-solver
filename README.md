@@ -2,7 +2,9 @@
 
 Solving kenken puzzles.
 
-Use in browser or with Node.
+Use in browser or with Node. (Note: it still needs some performance improvements. Can take way too long for large puzzles.)
+
+Here's [an example](https://rolyatmax.github.io/kenken-solver/).
 
 ```js
 const solve = require('./solve')
@@ -53,4 +55,4 @@ const clues = [
  - [x] check for multiple solutions
  - [ ] algorithm performance improvements
  - [ ] computer-generated kenken puzzles?
- - [ ] deploy on github pages
+ - [x] deploy on github pages
