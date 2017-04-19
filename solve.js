@@ -1,8 +1,8 @@
 const assert = require('assert')
 const newArray = require('new-array')
-const { createEmptyBoard, getMaxCellIndex } = require('./helpers')
+const { createEmptyBoard, validateClues } = require('./helpers')
 
-module.exports = function solve (clues) {
+module.exports = function solve (clues, opts = { debug: false }) {
   validateClues(clues)
   const board = createEmptyBoard(clues)
 
@@ -14,18 +14,33 @@ module.exports = function solve (clues) {
   }))
   clues.sort((clue1, clue2) => clue1.possibleAnswers.length - clue2.possibleAnswers.length)
 
-  const solution = getValidBoard(board, clues)
-  return solution
+  const queue = [[board, clues]]
+  const solutions = []
+
+  while (queue.length) {
+    const [board, clues] = queue.shift()
+    if (isValid(board) && !clues.length) {
+      solutions.push(board)
+      continue
+    }
+    if (opts.debug) console.log('queue length:', queue.length)
+    getNextPossibleBoards(board, clues[0])
+      .filter(isValid)
+      .forEach(b => queue.push([b, clues.slice(1)]))
+  }
+
+  return solutions
 }
 
-function getValidBoard (board, clues) {
-  if (isValid(board) && !clues.length) return board
-  const nextBoards = getNextPossibleBoards(board, clues[0])
-    .filter(isValid)
-    .map(b => getValidBoard(b, clues.slice(1)))
-    .filter(b => b)
-  return nextBoards[0] || null
-}
+// Used for DFS
+// function getValidBoard (board, clues) {
+//   if (isValid(board) && !clues.length) return board
+//   const nextBoards = getNextPossibleBoards(board, clues[0])
+//     .filter(isValid)
+//     .map(b => getValidBoard(b, clues.slice(1)))
+//     .filter(b => b)
+//   return nextBoards[0] || null
+// }
 
 function getPossibleAnswers (board, clue) {
   if (!clue.symbol) {
@@ -129,42 +144,6 @@ function checkRows (board) {
     }
   }
   return true
-}
-
-function validateClues (clues) {
-  const cells = {}
-  let cellCount = 0
-
-  clues.forEach(clue => {
-    clue.cells.forEach(cell => {
-      if (cells[cell]) {
-        throw new Error(`Cell ${cell} seen more than once`)
-      }
-      cellCount += 1
-      cells[cell] = true
-    })
-    // make sure all null symbols have only one cell
-    if (!clue.symbol && clue.cells.length !== 1) {
-      throw new Error(`Given value has too many cells: ${JSON.stringify(clue)}`)
-    }
-
-    // make sure - and / only have two cells
-    if (clue.symbol === '-' || clue.symbol === '/') {
-      if (clue.cells.length !== 2) {
-        throw new Error(`Clue with ${clue.symbol} symbol has ${clue.cells.length} cells`)
-      }
-    }
-
-    // make sure no results are 0
-    if (!clue.result) {
-      throw new Error(`Invalid clue result: ${clue.result}`)
-    }
-  })
-
-  // make sure all cells are covered - and covered only once
-  if (cellCount !== Math.pow(getMaxCellIndex(clues) + 1, 2)) {
-    throw new Error('Not all cells covered by clues')
-  }
 }
 
 // ---------- TESTS ----------

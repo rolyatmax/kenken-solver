@@ -2,9 +2,9 @@ import React from 'react'
 import newArray from 'new-array'
 import styled from 'styled-components'
 import ClickOutsideNotifier from './click-outside-notifier'
-// import clues from '../games'
+import games from '../games'
 import solve from '../solve'
-import { createEmptyBoard, createClues, createClueForCell, getNeighborCoords, addCellToClue } from '../helpers'
+import { validateClues, createEmptyBoard, createClues, createClueForCell, getNeighborCoords, addCellToClue, getMaxCellIndex } from '../helpers'
 
 const cellSize = 80
 const borderSize = 2
@@ -133,9 +133,9 @@ const SymbolSelect = styled.span`
   }
 `
 
-const SolveButton = styled.button`
-  font-size: 38px;
-  margin-top: 25px;
+const MainButton = styled.button`
+  font-size: 32px;
+  margin: 25px 5px 0;
   padding: 12px 30px;
   border: 1px solid #bbb;
   border-radius: 7px;
@@ -174,12 +174,39 @@ export default class App extends React.Component {
     this.setState({ clues, board })
   }
 
+  randomClues () {
+    let clues = this.state.clues
+    while (clues === this.state.clues && games.length > 1) {
+      clues = games[Math.random() * games.length | 0]
+    }
+    const gridSize = getMaxCellIndex(clues) + 1
+    this.setState({
+      ...this.getResetState(gridSize),
+      clues
+    })
+  }
+
+  resetBoard () {
+    this.setState(this.getResetState(this.state.gridSize))
+  }
+
   solve () {
-    // validate the clues
+    try {
+      validateClues(this.state.clues)
+    } catch (err) {
+      console.warn(err)
+      return
+    }
+
+    console.log(' ----- CLUES JSON -----')
+    console.log(JSON.stringify(this.state.clues))
+    console.log(' ----- CLUES JSON -----')
+
     // TODO: animate the solving (show all the board versions the algo is trying)
     // get the board solution and setState
-    const board = solve(this.state.clues)
-    this.setState({ board })
+    const solutions = solve(this.state.clues)
+    if (solutions.length > 1) console.warn('Found more than one solution!', solutions)
+    this.setState({ board: solutions[0] })
   }
 
   render () {
@@ -193,7 +220,9 @@ export default class App extends React.Component {
           size={gridSize}
           clues={clues}
           board={board} />
-        <SolveButton onClick={this.solve.bind(this)}>Solve!</SolveButton>
+        <MainButton onClick={this.resetBoard.bind(this)}>Reset</MainButton>
+        <MainButton onClick={this.solve.bind(this)}>Solve!</MainButton>
+        <MainButton onClick={this.randomClues.bind(this)}>Random</MainButton>
       </Container>
     )
   }

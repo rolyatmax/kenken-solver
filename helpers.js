@@ -8,7 +8,8 @@ module.exports = {
   createClues,
   createClueForCell,
   addCellToClue,
-  getNeighborCoords
+  getNeighborCoords,
+  validateClues
 }
 
 function createEmptyBoard (clues) {
@@ -86,4 +87,40 @@ function getNeighborCoords (cell, gridSize) {
     neighbors.bottom = `${columnNames[col]}${row + 2}` // [col, row + 1]
   }
   return neighbors
+}
+
+function validateClues (clues) {
+  const cells = {}
+  let cellCount = 0
+
+  clues.forEach(clue => {
+    clue.cells.forEach(cell => {
+      if (cells[cell]) {
+        throw new Error(`Cell ${cell} seen more than once`)
+      }
+      cellCount += 1
+      cells[cell] = true
+    })
+    // make sure all null symbols have only one cell
+    if (!clue.symbol && clue.cells.length !== 1) {
+      throw new Error(`Given value has too many cells: ${JSON.stringify(clue)}`)
+    }
+
+    // make sure - and / only have two cells
+    if (clue.symbol === '-' || clue.symbol === '/') {
+      if (clue.cells.length !== 2) {
+        throw new Error(`Clue with ${clue.symbol} symbol has ${clue.cells.length} cells`)
+      }
+    }
+
+    // make sure no results are 0
+    if (!clue.result) {
+      throw new Error(`Invalid clue result: ${clue.result}`)
+    }
+  })
+
+  // make sure all cells are covered - and covered only once
+  if (cellCount !== Math.pow(getMaxCellIndex(clues) + 1, 2)) {
+    throw new Error('Not all cells covered by clues')
+  }
 }

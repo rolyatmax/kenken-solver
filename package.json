@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "solve kenken puzzles",
   "keywords": "ken-ken kenken solver puzzles sudoku number math game",
-  "main": "index.js",
+  "main": "solve.js",
   "scripts": {
-    "start": "budo index.js:static/bundle.js --open --live",
+    "start": "budo index.js:bundle.js --open --live",
+    "build": "mkdir -p docs && browserify index.js > docs/bundle.js && cp index.html docs/",
     "lint": "standard"
   },
   "author": "Taylor Baldwin <taylorbaldwin@gmail.com> (https://tbaldw.in)",
