@@ -50,9 +50,10 @@ const clues = [
  - [x] add reset button
  - [x] add "random puzzle" button
  - [ ] encode puzzles in URL for easy sharing?
- - [x] clues validation error feedback
+ - [ ] clues validation error feedback in the UI
  - [ ] animate the solving
  - [x] check for multiple solutions
  - [ ] algorithm performance improvements
  - [ ] computer-generated kenken puzzles?
+ - [ ] add some instructions to the UI
  - [x] deploy on github pages
